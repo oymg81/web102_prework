@@ -36,7 +36,7 @@ function addGamesToPage(games) {
         const card = document.createElement("div");
     
         // add the class game-card to the list
-        card.classList.add("game-cadrd");
+        card.classList.add("game-card");
 
         // set the inner HTML using a template literal to display some info 
         // about each game
@@ -71,20 +71,21 @@ addGamesToPage(GAMES_JSON);
 const contributionsCard = document.getElementById("num-contributions");
 
 // use reduce() to count the number of total contributions by summing the backers
-
+const totalContributions = GAMES_JSON.reduce((acc, game) => acc + game.backers, 0);
 
 // set the inner HTML using a template literal and toLocaleString to get a number with commas
-
+contributionsCard.innerHTML = totalContributions.toLocaleString();
 
 // grab the amount raised card, then use reduce() to find the total amount raised
 const raisedCard = document.getElementById("total-raised");
+const totalRaised = GAMES_JSON.reduce((acc, game) => acc + game.pledged, 0);
 
 // set inner HTML using template literal
-
+raisedCard.innerHTML = `$${totalRaised.toLocaleString()}`;
 
 // grab number of games card and set its inner HTML
 const gamesCard = document.getElementById("num-games");
-
+gamesCard.innerHTML = GAMES_JSON.length.toLocaleString();
 
 /*************************************************************************************
  * Challenge 5: Add functions to filter the funded and unfunded games
@@ -97,10 +98,13 @@ function filterUnfundedOnly() {
     deleteChildElements(gamesContainer);
 
     // use filter() to get a list of games that have not yet met their goal
-
+    const unfunded = GAMES_JSON.filter(game => game.pledged < game.goal);
 
     // use the function we previously created to add the unfunded games to the DOM
+    addGamesToPage(unfunded);
 
+    // 👀 opcional: log para ver cuántos son
+    console.log("Unfunded games:", unfunded.length);
 }
 
 // show only games that are fully funded
@@ -108,10 +112,13 @@ function filterFundedOnly() {
     deleteChildElements(gamesContainer);
 
     // use filter() to get a list of games that have met or exceeded their goal
+    const funded = GAMES_JSON.filter(game => game.pledged >= game.goal);
 
+    // use the function we previously created to add funded games to the DOM
+    addGamesToPage(funded);
 
-    // use the function we previously created to add unfunded games to the DOM
-
+    // 👀 opcional: log para ver cuántos son
+    console.log("Funded games:", funded.length);
 }
 
 // show all games
@@ -119,7 +126,10 @@ function showAllGames() {
     deleteChildElements(gamesContainer);
 
     // add all games from the JSON data to the DOM
+    addGamesToPage(GAMES_JSON);
 
+    // 👀 opcional: log total
+    console.log("All games:", GAMES_JSON.length);
 }
 
 // select each button in the "Our Games" section
@@ -128,7 +138,9 @@ const fundedBtn = document.getElementById("funded-btn");
 const allBtn = document.getElementById("all-btn");
 
 // add event listeners with the correct functions to each button
-
+unfundedBtn.addEventListener("click", filterUnfundedOnly);
+fundedBtn.addEventListener("click", filterFundedOnly);
+allBtn.addEventListener("click", showAllGames);
 
 /*************************************************************************************
  * Challenge 6: Add more information at the top of the page about the company.
